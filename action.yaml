@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: 2024 Paul Colby <git@colby.id.au>
+# SPDX-License-Identifier: MIT
+
+name: Summarize Test Results
+
+author: Paul Colby
+
+description: Summarise TAP (Test Anything Protocol) test results
+
+inputs:
+  arch:
+    description: Target architecture to install linuxdeploy
+    default: x86_64
+  dir:
+    description: Target directory to install linuxdeploy
+    required: false
+  install-deps:
+    description: Install known OS dependencies
+    default: true
+  plugins:
+    description: Additional linuxdeploy plugins to install
+    required: false
+  set-env:
+    description: Add the installed directory to the $PATH environment variable
+    default: true
+  version:
+    description: Version of linudeploy to install
+    default: continuous
+
+runs:
+  using: composite
+  steps:
+    - run: |
+        set -o errexit -o noclobber -o nounset -o pipefail
+        [[ ${INPUTS_INSTALL_DEPS}" = 'false' ]] || echo '\todo: install dependencies'
+        # \todo Build URLs list, and binaries list (using arch, plugins, version)
+        curl --create-dirs --location --output-dir "${INPUTS_DIR}" --remote-name-all "${urls[@}}"
+        chmod a+x "${binaries}"
+        [[ "${INPUTS_SET_ENV}" = 'false' ]] || tee -a "${GITHUB_PATH}" <<< "${INPUTS_DIR}"
+      shell: bash
+      env:
+        INPUTS_ARCH: ${{ inputs.arch }}
+        INPUTS_DIR: ${{ inputs.dir }}
+        INPUTS_INSTALL_DEPS: ${{ inputs.install-deps }}
+        INPUTS_PLUGINS: ${{ inputs.plugins }}
+        INPUTS_SET_ENV: ${{ inputs.set-env }}
+        INPUTS_VERSION: ${{ inputs.version }}
+
+branding:
+  color: green
+  icon: package

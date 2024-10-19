@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2024 Paul Colby <git@colby.id.au>
+# SPDX-License-Identifier: MIT
+
+extends: default
+
+rules:
+  comments:
+    min-spaces-from-content: 1
+  document-start:
+    present: false
+  line-length:
+    max: 120
+  truthy:
+    check-keys: false
