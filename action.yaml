@@ -10,7 +10,7 @@ description: Install linuxdeploy, with optional plugins, in parrallel. Fast.
 inputs:
   arch:
     description: Target architecture to install linuxdeploy
-    default: x86_64
+    required: false
   dir:
     description: Target directory to install linuxdeploy
     default: ${{ runner.temp }}/linuxdeploy
@@ -33,6 +33,8 @@ runs:
     - run: |
         set -o errexit -o noclobber -o nounset -o pipefail
         [[ "${INPUTS_INSTALL_DEPS}" = 'false' ]] || sudo apt --assume-yes install libfuse2
+        declare -Ar DEFAULT_ARCH=([arm]='armhf' [arm64]='aarch64' [x64]='x86_64' [x86]='i386')
+        declare -r ARCH="${INPUTS_ARCH:-${DEFAULT_ARCH[${RUNNER_ARCH,,}]}}"
         declare -r RELEASE_FORMAT='https://github.com/%s/%s/releases/download/%%s/%s'
         declare -r RAW_FORMAT='https://raw.githubusercontent.com/%s/%s/%%s/%s'
         declare -Ar PLUGIN_FORMAT=(
@@ -41,16 +43,16 @@ runs:
           [gstreamer]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-gstreamer{,.sh})
           [gtk]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-gtk{,.sh})
           [ncurses]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-ncurses{,.sh})
-          [python]=$(printf "${RELEASE_FORMAT}" niess linuxdeploy-plugin-python{,-${INPUTS_ARCH}.AppImage})
+          [python]=$(printf "${RELEASE_FORMAT}" niess linuxdeploy-plugin-python{,-${ARCH}.AppImage})
         )
-        declare -a binaries=("${INPUTS_DIR}/linuxdeploy-${INPUTS_ARCH}.AppImage")
+        declare -a binaries=("${INPUTS_DIR}/linuxdeploy-${ARCH}.AppImage")
         declare -a urls=(
-          $(printf "$(printf "${RELEASE_FORMAT}" linuxdeploy{,,-${INPUTS_ARCH}.AppImage})" "${INPUTS_VERSION}")
+          $(printf "$(printf "${RELEASE_FORMAT}" linuxdeploy{,,-${ARCH}.AppImage})" "${INPUTS_VERSION}")
         )
         for plugin in ${INPUTS_PLUGINS}; do
           IFS='@' read -r name version <<< "${plugin}"
           [[ -v "PLUGIN_FORMAT[${name}]" ]] && urlFormat="${PLUGIN_FORMAT[${name}]}" ||
-            urlFormat=$(printf "${RELEASE_FORMAT}" linuxdeploy{,-plugin-${name}{,-${INPUTS_ARCH}.AppImage}})
+            urlFormat=$(printf "${RELEASE_FORMAT}" linuxdeploy{,-plugin-${name}{,-${ARCH}.AppImage}})
           [[ "${urlFormat}" == 'https://raw.'* ]] && : "${version:=master}" || : "${version:=${INPUTS_VERSION}}"
           printf -v url "${urlFormat}" "${version}"
           binaries+=("${INPUTS_DIR}/${url##*/}")

@@ -16,7 +16,7 @@ GitHub Action for installing [linuxdeploy] with optional plugins.
 ### `arch`
 
 The target architecture to install [linuxdeploy] for. This can be any architecture that [linuxdeploy] releases binaries
-for, but typically you'd want to leave it to default to `x86_64`.
+for. Defaults to match the architecture of the current workflow runner (typically `x86_64`).
 
 ### `dir`
 
