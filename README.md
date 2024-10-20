@@ -1,7 +1,7 @@
 # `install-linuxdeploy-action`
 
-[![CI](https://github.com/pcolby/install-linuxdeploy-action/actions/workflows/test.yaml/badge.svg?branch=main)](
-  https://github.com/pcolby/pcolby/install-linuxdeploy-action/actions/workflows/test.yaml)
+[![CI](https://github.com/pcolby/install-linuxdeploy-action/actions/workflows/ci.yaml/badge.svg?branch=main)](
+  https://github.com/pcolby/pcolby/install-linuxdeploy-action/actions/workflows/ci.yaml)
 
 GitHub Action for installing [linuxdeploy] with optional plugins.
 
@@ -20,7 +20,7 @@ for, but typically you'd want to leave it to default to `x86_64`.
 
 ### `dir`
 
-The target directory to install [linuxdeploy] to. Defaults to `${GITHUB_WORKSPACE}/linuxdeploy`.
+The target directory to install [linuxdeploy] to. Defaults to `${RUNNER_TEMP}/linuxdeploy`.
 
 ### `install-deps`
 
@@ -30,6 +30,12 @@ Whether or not to install known `apt` dependencies. Defaults to `true`.
 
 Space-separated list of optional [linuxdeploy] plugins to install. Any plugins directly listed in the
 [Awesome linuxdeploy!] listing should be supported, such as `appimage` and `qt`.
+
+Each plugin may be suffixed with a version, like `qt@v1.2.3`, to specify which version of that plugin to install. Note,
+however, for plugins with actual releases (such as `appimage` and `qt`), the version is a GitHub release tag, but for
+unreleased plugins (such as `gtk` and `gstreamer`) the version is a ref name or commit hash. If no version suffix is
+provided, released plugins default to match the [`version`](#version) option, while unreleased plugins defualt to their
+default branch (ie `master`).
 
 ### `set-env`
 
@@ -41,8 +47,8 @@ The [linuxdeploy] version to install, as well as the _default_ version for any `
 version.
 
 > [!IMPORTANT]
-> Currently this defaults to `continuous`, as [linuxdeploy] currently has no official stable release, but at some point
-> this will likely default to the most recent, current, tested stable [linuxdeploy] version.
+> Currently this defaults to `continuous`, as [linuxdeploy] has no official stable release yet. But at some point
+> this will likely default to the most recent stable [linuxdeploy] version that has been tested with this action.
 
 ### Example with all options
 
@@ -51,9 +57,9 @@ version.
   uses: pcolby/install-linuxdeploy-action@v1
   with:
     arch: x86_64
-    dir: ${{ github.workspace }}/linuxdeploy
+    dir: ${{ runner.temp }}/linuxdeploy
     install-deps: true
-    plugins: qt
+    plugins: appimage gtk@master qt
     set-env: true
     version: continuous
 ```

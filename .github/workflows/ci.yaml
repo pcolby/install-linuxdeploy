@@ -1,0 +1,91 @@
+# SPDX-FileCopyrightText: 2024 Paul Colby <git@colby.id.au>
+# SPDX-License-Identifier: MIT
+
+name: CI
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: yamllint .
+
+  test-defaults:
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+      - run: linuxdeploy-x86_64.AppImage --list-plugins
+    strategy:
+      matrix:
+        os:
+          - ubuntu-22.04
+          - ubuntu-24.04
+      fail-fast: false
+
+  test-options:
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Define test install dir
+        run: tee -a "$GITHUB_ENV" <<< "INSTALL_DIR=${RUNNER_TEMP}/test/linuxdeploy/bin"
+      - name: Record pre-state
+        run: |
+          apt list --installed > "${RUNNER_TEMP}/apt.pre"
+          env | grep -v '^GITHUB_' | sort > "${RUNNER_TEMP}/env.pre"
+      - name: Install linuxdeploy, overriding all options
+        uses: ./
+        with:
+          arch: i386
+          dir: ${{ env.INSTALL_DIR }}
+          install-deps: false
+          plugins: appimage@1-alpha-20230713-1 qt
+          set-env: false
+          version: 1-alpha-20240109-1
+      - name: Check post-state
+        run: |
+          apt list --installed > "${RUNNER_TEMP}/apt.post"
+          env | grep -v '^GITHUB_' | sort > "${RUNNER_TEMP}/env.post"
+          diff -u "${RUNNER_TEMP}/apt."{pre,post}
+          diff -u "${RUNNER_TEMP}/env."{pre,post}
+      - name: Check installed binaries
+        run: |
+          sha384sum --check <<--
+          695dbdd17adbf8bc0117fc6ad7e7054099965e7c65963b382373ca90d1b0b9409691ff7107d4bb1e83d4790636ce6b8f\
+            ${INSTALL_DIR}/linuxdeploy-i386.AppImage
+          28550e5f1699bc826d645d8f8116575df31d7cc16d2ad566a81d11087695fa1445893c0c3ac464a2cb65808bafdd1acd\
+            ${INSTALL_DIR}/linuxdeploy-plugin-appimage-i386.AppImage
+          a558dcc455997d36fa781ac60ef9bed4cabea4ba716865632fd86460d34de0dc39162cb1de5cd877d2f2d2c16a393003\
+            ${INSTALL_DIR}/linuxdeploy-plugin-qt-i386.AppImage
+          -
+    strategy:
+      matrix:
+        os:
+          - ubuntu-22.04
+          - ubuntu-24.04
+      fail-fast: false
+
+  test-plugins:
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install linuxdeploy, and all supported plugins
+        uses: ./
+        with:
+          plugins: appimage checkrt conda gstreamer gtk native_packages ncurses python qt
+      - name: Check installed plugins
+        run: |
+          ls -l "${RUNNER_TEMP}/linuxdeploy"
+          linuxdeploy-x86_64.AppImage --list-plugins | tee "${RUNNER_TEMP}/plugins.txt"
+          plugins=($(sed -Ee '0,/^Available plugins:/d' -e 's/:.*//' "${RUNNER_TEMP}/plugins.txt" | sort))
+          [[ "${plugins[@]}" = 'appimage checkrt conda gstreamer gtk native_packages ncurses python qt' ]]
+    strategy:
+      matrix:
+        os:
+          - ubuntu-22.04
+          - ubuntu-24.04
+      fail-fast: false
