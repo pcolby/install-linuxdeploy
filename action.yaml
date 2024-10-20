@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: 2024 Paul Colby <git@colby.id.au>
 # SPDX-License-Identifier: MIT
 
-name: Summarize Test Results
+name: Install linuxdeploy
 
 author: Paul Colby
 
-description: Summarise TAP (Test Anything Protocol) test results
+description: Install linuxdeploy, with optional plugins
 
 inputs:
   arch:
