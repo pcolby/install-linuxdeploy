@@ -52,7 +52,7 @@ version.
 
 ### Example with all options
 
-```
+```yaml
 - name: Install linuxdeploy
   uses: pcolby/install-linuxdeploy-action@v1
   with:
