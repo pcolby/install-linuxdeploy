@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: 2024 Paul Colby <git@colby.id.au>
 # SPDX-License-Identifier: MIT
 
-name: Install linuxdeploy tool
+name: Fast linuxdeploy install
 
 author: Paul Colby
 
-description: Install linuxdeploy, with optional plugins
+description: Install linuxdeploy, with optional plugins, in parrallel. Fast.
 
 inputs:
   arch:
