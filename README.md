@@ -1,14 +1,14 @@
-# `install-linuxdeploy-action`
+# Install linuxdeploy
 
-[![CI](https://github.com/pcolby/install-linuxdeploy-action/actions/workflows/ci.yaml/badge.svg?branch=main)](
-  https://github.com/pcolby/pcolby/install-linuxdeploy-action/actions/workflows/ci.yaml)
+[![CI](https://github.com/pcolby/install-linuxdeploy/actions/workflows/ci.yaml/badge.svg?branch=main)](
+  https://github.com/pcolby/pcolby/install-linuxdeploy/actions/workflows/ci.yaml)
 
 GitHub Action for installing [linuxdeploy] with optional plugins.
 
 ## Usage
 
 ```yaml
-- uses: pcolby/install-linuxdeploy-action@v1
+- uses: pcolby/install-linuxdeploy@v1
 ```
 
 ## Options
@@ -54,7 +54,7 @@ version.
 
 ```yaml
 - name: Install linuxdeploy
-  uses: pcolby/install-linuxdeploy-action@v1
+  uses: pcolby/install-linuxdeploy@v1
   with:
     arch: x86_64
     dir: ${{ runner.temp }}/linuxdeploy
