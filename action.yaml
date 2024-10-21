@@ -40,6 +40,10 @@ runs:
         declare -Ar PLUGIN_FORMAT=(
           [checkrt]=$(printf "${RELEASE_FORMAT}" darealshinji linuxdeploy-plugin-checkrt{,.sh})
           [conda]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-conda{,.sh})
+          [demo]=$(printf "${RAW_FORMAT}" linuxdeploy misc-plugins 'demo/linuxdeploy-plugin-demo.sh')
+          [gdb]=$(printf "${RAW_FORMAT}" linuxdeploy misc-plugins 'gdb/linuxdeploy-plugin-gdb.sh')
+          [gettext]=$(printf "${RAW_FORMAT}" linuxdeploy misc-plugins 'gettext/linuxdeploy-plugin-gettext.sh')
+          [grantlee5]=$(printf "${RAW_FORMAT}" linuxdeploy misc-plugins 'grantlee5/linuxdeploy-plugin-grantlee5.sh')
           [gstreamer]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-gstreamer{,.sh})
           [gtk]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-gtk{,.sh})
           [ncurses]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-ncurses{,.sh})

@@ -71,18 +71,33 @@ jobs:
 
   test-plugins:
     runs-on: ${{ matrix.os }}
+    env:
+      PLUGINS: >-
+        appimage
+        checkrt
+        conda
+        demo
+        gdb
+        gettext
+        grantlee5
+        gstreamer
+        gtk
+        native_packages
+        ncurses
+        python
+        qt
     steps:
       - uses: actions/checkout@v4
       - name: Install linuxdeploy, and all supported plugins
         uses: ./
         with:
-          plugins: appimage checkrt conda gstreamer gtk native_packages ncurses python qt
+          plugins: ${{ env.PLUGINS }}
       - name: Check installed plugins
         run: |
           ls -l "${RUNNER_TEMP}/linuxdeploy"
           linuxdeploy-x86_64.AppImage --list-plugins | tee "${RUNNER_TEMP}/plugins.txt"
           plugins=($(sed -Ee '0,/^Available plugins:/d' -e 's/:.*//' "${RUNNER_TEMP}/plugins.txt" | sort))
-          [[ "${plugins[@]}" = 'appimage checkrt conda gstreamer gtk native_packages ncurses python qt' ]]
+          [[ "${plugins[@]}" = "${PLUGINS}" ]]
     strategy:
       matrix:
         os:

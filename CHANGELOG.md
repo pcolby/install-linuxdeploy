@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.1][] (2024-10-21)
+
+Added support for the follow [misc-plugins]:
+
+- `demo`
+- `gdb`
+- `gettext`
+- `grantlee5`
+
 ## [1.0.1][] (2024-10-20)
 
 Match host runner's architecture by default.
@@ -22,3 +31,4 @@ Initial public release, with full support for installing [linuxdeploy], and the 
 [1.0.0]: https://github.com/pcolby/install-linuxdeploy/releases/tag/v1.0.0
 
 [linuxdeploy]: https://github.com/linuxdeploy/linuxdeploy
+[misc-plugins]: https://github.com/linuxdeploy/misc-plugins
