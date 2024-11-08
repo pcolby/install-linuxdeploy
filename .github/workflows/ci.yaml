@@ -4,8 +4,11 @@
 name: CI
 
 on:
-  - push
-  - pull_request
+  pull_request:
+  push:
+  schedule:
+    - cron: '30 17 * * *' # Daily, 03:30 AEST / 04:30 AEDT.
+  workflow_dispatch:
 
 jobs:
   lint:
