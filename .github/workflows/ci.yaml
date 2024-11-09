@@ -107,3 +107,50 @@ jobs:
           - ubuntu-22.04
           - ubuntu-24.04
       fail-fast: false
+
+  test-plugins-latest:
+    runs-on: ${{ matrix.os }}
+    env:
+      # These should all be the latest official releases, however most (all?) plugins don't have official releases yet.
+      PLUGINS: >-
+        appimage@1-alpha-20230713-1
+        checkrt@continuous
+        conda@master
+        demo@master
+        gdb@master
+        gettext@master
+        grantlee5@master
+        gstreamer@master
+        gtk@master
+        native_packages@continuous
+        ncurses@master
+        python@continuous
+        qt@2.0.0-alpha-1-20241106
+    steps:
+      - uses: actions/checkout@v4
+      - name: Filter plugins not supported for this arch
+        run: |
+          [[ '${{ matrix.arch }}' =~ ^(i386|x86_64)$ ]] ||
+            PLUGINS=$(sed -Ee 's/appimage@[^ ]+//g' <<< "${PLUGINS}")
+          [[ '${{ matrix.arch }}' == 'x86_64' ]] ||
+            PLUGINS=$(sed -Ee 's/(native_packages|ncurses|python)@[^ ]+//g' <<< "${PLUGINS}")
+          tee -a "$GITHUB_ENV" <<< "PLUGINS=${PLUGINS}"
+      - name: Install linuxdeploy, and all supported plugins
+        uses: ./
+        with:
+          arch: ${{ matrix.arch }}
+          plugins: ${{ env.PLUGINS }}
+      - if: endsWith(matrix.arch, 'x86_64')
+        run: linuxdeploy-${{ matrix.arch }}.AppImage --list-plugins
+    strategy:
+      matrix:
+        arch:
+          - aarch64
+          - armhf
+          - i386
+          - static-x86_64
+          - x86_64
+        os:
+          - ubuntu-22.04
+          - ubuntu-24.04
+      fail-fast: false
