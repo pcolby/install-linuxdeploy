@@ -86,8 +86,8 @@ jobs:
         gstreamer
         gtk
         native_packages
-        nop
         ncurses
+        nop
         python
         qt
     steps:
