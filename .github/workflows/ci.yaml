@@ -86,6 +86,7 @@ jobs:
         gstreamer
         gtk
         native_packages
+        nop
         ncurses
         python
         qt
@@ -124,6 +125,7 @@ jobs:
         gtk@master
         native_packages@continuous
         ncurses@master
+        nop@v0.1
         python@continuous
         qt@2.0.0-alpha-1-20241106
     steps:

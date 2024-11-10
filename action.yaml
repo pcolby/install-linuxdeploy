@@ -47,6 +47,7 @@ runs:
           [gstreamer]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-gstreamer{,.sh})
           [gtk]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-gtk{,.sh})
           [ncurses]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-ncurses{,.sh})
+          [nop]=$(printf "${RELEASE_FORMAT}" kstr0k linuxdeploy-plugin-nop{,.sh})
           [python]=$(printf "${RELEASE_FORMAT}" niess linuxdeploy-plugin-python{,-${ARCH}.AppImage})
         )
         declare -a binaries=("${INPUTS_DIR}/linuxdeploy-${ARCH}.AppImage")
@@ -55,6 +56,7 @@ runs:
         )
         for plugin in ${INPUTS_PLUGINS}; do
           IFS='@' read -r name version <<< "${plugin}"
+          [[ "${name}" != 'nop' ]] || version='v0.1' # \todo Generalise this.
           [[ -v "PLUGIN_FORMAT[${name}]" ]] && urlFormat="${PLUGIN_FORMAT[${name}]}" ||
             urlFormat=$(printf "${RELEASE_FORMAT}" linuxdeploy{,-plugin-${name}{,-${ARCH}.AppImage}})
           [[ "${urlFormat}" == 'https://raw.'* ]] && : "${version:=master}" || : "${version:=${INPUTS_VERSION}}"
