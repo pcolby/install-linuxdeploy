@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Paul Colby <git@colby.id.au>
+# SPDX-FileCopyrightText: 2024-2025 Paul Colby <git@colby.id.au>
 # SPDX-License-Identifier: MIT
 
 name: Quick install linuxdeploy
@@ -24,7 +24,7 @@ inputs:
     description: Add the installed directory to the $PATH environment variable
     default: true
   version:
-    description: Version of linudeploy to install
+    description: Version of linuxdeploy to install
     default: continuous
 
 runs:
