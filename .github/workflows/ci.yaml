@@ -147,7 +147,7 @@ jobs:
 
   test-architectures:
     name: Archs
-    runs-on: unbuntu-${{ matrix.os }}${{ matrix.arch == 'aarch64' && '-arm' || '' }}
+    runs-on: ubuntu-${{ matrix.os }}${{ matrix.arch == 'aarch64' && '-arm' || '' }}
     env:
       # These should all be the latest official releases, however most (all?) plugins don't have official releases yet.
       PLUGINS: >-
