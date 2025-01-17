@@ -186,13 +186,13 @@ jobs:
         run: linuxdeploy-${{ matrix.arch }}.AppImage --list-plugins
     strategy:
       matrix:
+        os:
+          - 22.04
+          - 24.04
         arch:
           - aarch64
           - armhf
           - i386
           - static-x86_64
           - x86_64
-        os:
-          - 22.04
-          - 24.04
       fail-fast: false
