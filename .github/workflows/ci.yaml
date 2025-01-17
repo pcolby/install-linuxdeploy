@@ -12,27 +12,42 @@ on:
 
 jobs:
   lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: yamllint .
 
   test-defaults:
-    runs-on: ${{ matrix.os }}
+    name: Defaults
+    runs-on: ubuntu-${{ matrix.os }}
     steps:
+      # \todo Remove this step when https://github.com/actions/partner-runner-images/issues/25 is resolved.
+      - name: Correct broken $PATH on Linux arm64 runners
+        if: endsWith(matrix.os, '-arm')
+        run: sed -Ee 's/^/PATH=/' -e 's/(runner)admin/\1/g' <<< "${PATH}" | tee -a "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - uses: ./
-      - run: linuxdeploy-x86_64.AppImage --list-plugins
+      - run: linuxdeploy-"${LINUXDEPLOY_ARCH}".AppImage --list-plugins
+        env:
+          LINUXDEPLOY_ARCH: ${{ endsWith(matrix.os, '-arm') && 'aarch64' || 'x86_64' }}
     strategy:
       matrix:
         os:
-          - ubuntu-22.04
-          - ubuntu-24.04
+          - 22.04
+          - 22.04-arm
+          - 24.04
+          - 24.04-arm
       fail-fast: false
 
   test-options:
-    runs-on: ${{ matrix.os }}
+    name: Options
+    runs-on: ubuntu-${{ matrix.os }}
     steps:
+      # \todo Remove this step when https://github.com/actions/partner-runner-images/issues/25 is resolved.
+      - name: Correct broken $PATH on Linux arm64 runners
+        if: endsWith(matrix.os, '-arm')
+        run: sed -Ee 's/^/PATH=/' -e 's/(runner)admin/\1/g' <<< "${PATH}" | tee -a "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - name: Define test install dir
         run: tee -a "$GITHUB_ENV" <<< "INSTALL_DIR=${RUNNER_TEMP}/test/linuxdeploy/bin"
@@ -68,12 +83,15 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-22.04
-          - ubuntu-24.04
+          - 22.04
+          - 22.04-arm
+          - 24.04
+          - 24.04-arm
       fail-fast: false
 
   test-plugins:
-    runs-on: ${{ matrix.os }}
+    name: Plugins
+    runs-on: ubuntu-${{ matrix.os }}
     env:
       PLUGINS: >-
         appimage
@@ -91,7 +109,17 @@ jobs:
         python
         qt
     steps:
+      # \todo Remove this step when https://github.com/actions/partner-runner-images/issues/25 is resolved.
+      - name: Correct broken $PATH on Linux arm64 runners
+        if: endsWith(matrix.os, '-arm')
+        run: sed -Ee 's/^/PATH=/' -e 's/(runner)admin/\1/g' <<< "${PATH}" | tee -a "$GITHUB_ENV"
       - uses: actions/checkout@v4
+      - name: Filter plugins not supported for this arch
+        run: |
+          [[ '${{ matrix.os }}' != *-arm ]] ||
+            PLUGINS=$(sed -Ee 's/(appimage|native_packages|python)//g' \
+                           -e 's/ +/ /g' -e 's/(^ )|( $)//' <<< "${PLUGINS}")
+          tee -a "$GITHUB_ENV" <<< "PLUGINS=${PLUGINS}"
       - name: Install linuxdeploy, and all supported plugins
         uses: ./
         with:
@@ -99,18 +127,28 @@ jobs:
       - name: Check installed plugins
         run: |
           ls -l "${RUNNER_TEMP}/linuxdeploy"
-          linuxdeploy-x86_64.AppImage --list-plugins | tee "${RUNNER_TEMP}/plugins.txt"
+          linuxdeploy-"${LINUXDEPLOY_ARCH}".AppImage --list-plugins | tee "${RUNNER_TEMP}/plugins.txt"
           plugins=($(sed -Ee '0,/^Available plugins:/d' -e 's/:.*//' "${RUNNER_TEMP}/plugins.txt" | sort))
-          [[ "${plugins[@]}" = "${PLUGINS}" ]]
+          [[ '${{ matrix.os }}' != *-arm ]] || PLUGINS="appimage ${PLUGINS}" # linuxdeploy provides an appimage plugin.
+          [[ "${plugins[@]}" == "${PLUGINS}" ]] || {
+            echo "Expected: '${PLUGINS}'"
+            echo "Actual:   '${plugins[@]}'"
+            false
+          }
+        env:
+          LINUXDEPLOY_ARCH: ${{ endsWith(matrix.os, '-arm') && 'aarch64' || 'x86_64' }}
     strategy:
       matrix:
         os:
-          - ubuntu-22.04
-          - ubuntu-24.04
+          - 22.04
+          - 22.04-arm
+          - 24.04
+          - 24.04-arm
       fail-fast: false
 
-  test-plugins-latest:
-    runs-on: ${{ matrix.os }}
+  test-architectures:
+    name: Archs
+    runs-on: ubuntu-${{ matrix.os }}${{ matrix.arch == 'aarch64' && '-arm' || '' }}
     env:
       # These should all be the latest official releases, however most (all?) plugins don't have official releases yet.
       PLUGINS: >-
@@ -129,30 +167,34 @@ jobs:
         python@continuous
         qt@2.0.0-alpha-1-20241106
     steps:
+      # \todo Remove this step when https://github.com/actions/partner-runner-images/issues/25 is resolved.
+      - name: Correct broken $PATH on Linux arm64 runners
+        if: matrix.arch == 'aarch64'
+        run: sed -Ee 's/^/PATH=/' -e 's/(runner)admin/\1/g' <<< "${PATH}" | tee -a "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - name: Filter plugins not supported for this arch
         run: |
           [[ '${{ matrix.arch }}' =~ ^(i386|x86_64)$ ]] ||
             PLUGINS=$(sed -Ee 's/appimage@[^ ]+//g' <<< "${PLUGINS}")
           [[ '${{ matrix.arch }}' == 'x86_64' ]] ||
-            PLUGINS=$(sed -Ee 's/(native_packages|ncurses|python)@[^ ]+//g' <<< "${PLUGINS}")
+            PLUGINS=$(sed -Ee 's/(native_packages|python)@[^ ]+//g' <<< "${PLUGINS}")
           tee -a "$GITHUB_ENV" <<< "PLUGINS=${PLUGINS}"
       - name: Install linuxdeploy, and all supported plugins
         uses: ./
         with:
           arch: ${{ matrix.arch }}
           plugins: ${{ env.PLUGINS }}
-      - if: endsWith(matrix.arch, 'x86_64')
+      - if: matrix.arch == 'aarch64' || endsWith(matrix.arch, 'x86_64')
         run: linuxdeploy-${{ matrix.arch }}.AppImage --list-plugins
     strategy:
       matrix:
+        os:
+          - 22.04
+          - 24.04
         arch:
           - aarch64
           - armhf
           - i386
           - static-x86_64
           - x86_64
-        os:
-          - ubuntu-22.04
-          - ubuntu-24.04
       fail-fast: false

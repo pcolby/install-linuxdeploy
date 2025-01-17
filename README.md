@@ -37,6 +37,15 @@ unreleased plugins (such as `gtk` and `gstreamer`) the version is a ref name or 
 provided, released plugins default to match the [`version`](#version) option, while unreleased plugins defualt to their
 default branch (ie `master`).
 
+> [!TIP]
+> As per the [AppImage plugin's `README.md` file:](
+> https://github.com/linuxdeploy/linuxdeploy-plugin-appimage?tab=readme-ov-file#updating-the-appimage-plugin)
+> 
+> > The official linuxdeploy AppImage ships with a fairly recent version of the plugin.
+> 
+> So while you _can_ install a specific version of the `appimage` plugin via `plugins`, which will override the default
+> one shipped with [linuxdeploy], it usually isn't necessary for that plugin.
+
 ### `set-env`
 
 Whether or not to update the `$PATH` environment variable to include the installation `dir`. Defaults to `true`.
