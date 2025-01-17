@@ -12,12 +12,14 @@ on:
 
 jobs:
   lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: yamllint .
 
   test-defaults:
+    name: Defaults
     runs-on: ${{ matrix.os }}
     steps:
       # \todo Remove this step when https://github.com/actions/partner-runner-images/issues/25 is resolved.
@@ -39,6 +41,7 @@ jobs:
       fail-fast: false
 
   test-options:
+    name: Options
     runs-on: ${{ matrix.os }}
     steps:
       # \todo Remove this step when https://github.com/actions/partner-runner-images/issues/25 is resolved.
@@ -87,6 +90,7 @@ jobs:
       fail-fast: false
 
   test-plugins:
+    name: Plugins
     runs-on: ${{ matrix.os }}
     env:
       PLUGINS: >-
@@ -141,7 +145,8 @@ jobs:
           - ubuntu-24.04-arm
       fail-fast: false
 
-  test-plugins-latest:
+  test-architectures:
+    name: Architectures
     runs-on: ${{ matrix.os }}${{ matrix.arch == 'aarch64' && '-arm' || '' }}
     env:
       # These should all be the latest official releases, however most (all?) plugins don't have official releases yet.
