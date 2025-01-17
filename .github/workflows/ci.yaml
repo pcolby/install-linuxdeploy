@@ -20,7 +20,7 @@ jobs:
 
   test-defaults:
     name: Defaults
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-${{ matrix.os }}
     steps:
       # \todo Remove this step when https://github.com/actions/partner-runner-images/issues/25 is resolved.
       - name: Correct broken $PATH on Linux arm64 runners
@@ -34,15 +34,15 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-22.04
-          - ubuntu-22.04-arm
-          - ubuntu-24.04
-          - ubuntu-24.04-arm
+          - 22.04
+          - 22.04-arm
+          - 24.04
+          - 24.04-arm
       fail-fast: false
 
   test-options:
     name: Options
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-${{ matrix.os }}
     steps:
       # \todo Remove this step when https://github.com/actions/partner-runner-images/issues/25 is resolved.
       - name: Correct broken $PATH on Linux arm64 runners
@@ -83,15 +83,15 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-22.04
-          - ubuntu-22.04-arm
-          - ubuntu-24.04
-          - ubuntu-24.04-arm
+          - 22.04
+          - 22.04-arm
+          - 24.04
+          - 24.04-arm
       fail-fast: false
 
   test-plugins:
     name: Plugins
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-${{ matrix.os }}
     env:
       PLUGINS: >-
         appimage
@@ -139,15 +139,15 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-22.04
-          - ubuntu-22.04-arm
-          - ubuntu-24.04
-          - ubuntu-24.04-arm
+          - 22.04
+          - 22.04-arm
+          - 24.04
+          - 24.04-arm
       fail-fast: false
 
   test-architectures:
-    name: Architectures
-    runs-on: ${{ matrix.os }}${{ matrix.arch == 'aarch64' && '-arm' || '' }}
+    name: Archs
+    runs-on: unbuntu-${{ matrix.os }}${{ matrix.arch == 'aarch64' && '-arm' || '' }}
     env:
       # These should all be the latest official releases, however most (all?) plugins don't have official releases yet.
       PLUGINS: >-
@@ -193,6 +193,6 @@ jobs:
           - static-x86_64
           - x86_64
         os:
-          - ubuntu-22.04
-          - ubuntu-24.04
+          - 22.04
+          - 24.04
       fail-fast: false
