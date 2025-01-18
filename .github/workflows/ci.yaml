@@ -22,10 +22,6 @@ jobs:
     name: Defaults
     runs-on: ubuntu-${{ matrix.os }}
     steps:
-      # \todo Remove this step when https://github.com/actions/partner-runner-images/issues/25 is resolved.
-      - name: Correct broken $PATH on Linux arm64 runners
-        if: endsWith(matrix.os, '-arm')
-        run: sed -Ee 's/^/PATH=/' -e 's/(runner)admin/\1/g' <<< "${PATH}" | tee -a "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - uses: ./
       - run: linuxdeploy-"${LINUXDEPLOY_ARCH}".AppImage --list-plugins
@@ -44,10 +40,6 @@ jobs:
     name: Options
     runs-on: ubuntu-${{ matrix.os }}
     steps:
-      # \todo Remove this step when https://github.com/actions/partner-runner-images/issues/25 is resolved.
-      - name: Correct broken $PATH on Linux arm64 runners
-        if: endsWith(matrix.os, '-arm')
-        run: sed -Ee 's/^/PATH=/' -e 's/(runner)admin/\1/g' <<< "${PATH}" | tee -a "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - name: Define test install dir
         run: tee -a "$GITHUB_ENV" <<< "INSTALL_DIR=${RUNNER_TEMP}/test/linuxdeploy/bin"
@@ -108,10 +100,6 @@ jobs:
         python
         qt
     steps:
-      # \todo Remove this step when https://github.com/actions/partner-runner-images/issues/25 is resolved.
-      - name: Correct broken $PATH on Linux arm64 runners
-        if: endsWith(matrix.os, '-arm')
-        run: sed -Ee 's/^/PATH=/' -e 's/(runner)admin/\1/g' <<< "${PATH}" | tee -a "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - name: Filter plugins not supported for this arch
         run: |
@@ -165,10 +153,6 @@ jobs:
         python@continuous
         qt@2.0.0-alpha-1-20241106
     steps:
-      # \todo Remove this step when https://github.com/actions/partner-runner-images/issues/25 is resolved.
-      - name: Correct broken $PATH on Linux arm64 runners
-        if: matrix.arch == 'aarch64'
-        run: sed -Ee 's/^/PATH=/' -e 's/(runner)admin/\1/g' <<< "${PATH}" | tee -a "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - name: Filter plugins not supported for this arch
         run: |
