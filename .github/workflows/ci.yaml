@@ -55,7 +55,7 @@ jobs:
           install-deps: false
           plugins: appimage@1-alpha-20230713-1 qt
           set-env: false
-          version: 1-alpha-20240109-1
+          version: 2.0.0-alpha-1-20241106
       - name: Check post-state
         run: |
           apt list --installed > "${RUNNER_TEMP}/apt.post"
@@ -64,12 +64,13 @@ jobs:
           diff -u "${RUNNER_TEMP}/env."{pre,post}
       - name: Check installed binaries
         run: |
-          sha384sum --check <<--
-          695dbdd17adbf8bc0117fc6ad7e7054099965e7c65963b382373ca90d1b0b9409691ff7107d4bb1e83d4790636ce6b8f\
+          sha384sum "${INSTALL_DIR}"/*.AppImage # Log the actual checksums for debugging / diagnostics.
+          sha384sum --check --strict <<--
+          5b314ddedc5fa78747224e276003f83209232031b402bd72626c468043b5e89c6f2731e6613f2ac7c3284b500076e3ae\
             ${INSTALL_DIR}/linuxdeploy-i386.AppImage
           28550e5f1699bc826d645d8f8116575df31d7cc16d2ad566a81d11087695fa1445893c0c3ac464a2cb65808bafdd1acd\
             ${INSTALL_DIR}/linuxdeploy-plugin-appimage-i386.AppImage
-          a558dcc455997d36fa781ac60ef9bed4cabea4ba716865632fd86460d34de0dc39162cb1de5cd877d2f2d2c16a393003\
+          1f34dc368a588286e615b0af719631e31f3a1f1fe8f9f092eda2844723856a25754068c03b7652c55bac3482bc5d0a0d\
             ${INSTALL_DIR}/linuxdeploy-plugin-qt-i386.AppImage
           -
     strategy:
@@ -151,7 +152,7 @@ jobs:
         native_packages@continuous
         ncurses@master
         python@continuous
-        qt@2.0.0-alpha-1-20241106
+        qt@2.0.0-alpha-1-20250119
     steps:
       - uses: actions/checkout@v4
       - name: Filter plugins not supported for this arch
