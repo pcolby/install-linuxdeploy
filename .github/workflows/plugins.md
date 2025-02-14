@@ -11,7 +11,7 @@ Just a convenient list for CI development.
 | [gtk]             | *all* (`.sh`) |
 | [native_packages] |`x86_64` |
 | [ncurses]         | *all* (`.sh`) |
-| [qt]              | `aarch64`, `armhf`, `i386`, `static-x86_64`, `x86_64` |
+| [qt]              | `aarch64`, `armhf`, `i386`, ~`static-x86_64`,~ `x86_64` |
 | *Official Misc Plugins* ||
 | [demo]      | *all* (`.sh`) |
 | [gdb]       | *all* (`.sh`) |

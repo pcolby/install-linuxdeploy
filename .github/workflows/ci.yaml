@@ -53,9 +53,9 @@ jobs:
           arch: i386
           dir: ${{ env.INSTALL_DIR }}
           install-deps: false
-          plugins: appimage@1-alpha-20230713-1 qt
+          plugins: appimage@1-alpha-20250213-1 qt@1-alpha-20250213-1
           set-env: false
-          version: 2.0.0-alpha-1-20241106
+          version: 1-alpha-20250213-2
       - name: Check post-state
         run: |
           apt list --installed > "${RUNNER_TEMP}/apt.post"
@@ -66,11 +66,11 @@ jobs:
         run: |
           sha384sum "${INSTALL_DIR}"/*.AppImage # Log the actual checksums for debugging / diagnostics.
           sha384sum --check --strict <<--
-          5b314ddedc5fa78747224e276003f83209232031b402bd72626c468043b5e89c6f2731e6613f2ac7c3284b500076e3ae\
+          c816c8aa33c5c7fb9a5dbdec50fa0a4546dabfc9397df8e144c1ba38a0158f2962f2d0299ce42b372e0355911e182a52\
             ${INSTALL_DIR}/linuxdeploy-i386.AppImage
-          28550e5f1699bc826d645d8f8116575df31d7cc16d2ad566a81d11087695fa1445893c0c3ac464a2cb65808bafdd1acd\
-            ${INSTALL_DIR}/linuxdeploy-plugin-appimage-i386.AppImage
-          1f34dc368a588286e615b0af719631e31f3a1f1fe8f9f092eda2844723856a25754068c03b7652c55bac3482bc5d0a0d\
+          625b34c982fbc873cda0282d4d378ea323fd78a48687b6cd5bbe2a11f4c4c1cee5ddfa4f74bf9afb2eb22086bfc58971\
+            ${INSTALL_DIR}/linuxdeploy-plugin-appimage-i686.AppImage
+          6cc269e593cc5febbeb4af61d2fc288bd59498d39a5a2e56bac2c66b371aadf11d6e057f3a205a42d945b2d87304fe71\
             ${INSTALL_DIR}/linuxdeploy-plugin-qt-i386.AppImage
           -
     strategy:
@@ -140,7 +140,7 @@ jobs:
     env:
       # These should all be the latest official releases, however most (all?) plugins don't have official releases yet.
       PLUGINS: >-
-        appimage@1-alpha-20230713-1
+        appimage@1-alpha-20250213-1
         checkrt@continuous
         conda@master
         demo@master
@@ -152,7 +152,7 @@ jobs:
         native_packages@continuous
         ncurses@master
         python@continuous
-        qt@2.0.0-alpha-1-20250119
+        qt@1-alpha-20250213-1
     steps:
       - uses: actions/checkout@v4
       - name: Filter plugins not supported for this arch
@@ -167,7 +167,7 @@ jobs:
         with:
           arch: ${{ matrix.arch }}
           plugins: ${{ env.PLUGINS }}
-      - if: matrix.arch == 'aarch64' || endsWith(matrix.arch, 'x86_64')
+      - if: matrix.arch == 'aarch64' || matrix.arch == 'x86_64'
         run: linuxdeploy-${{ matrix.arch }}.AppImage --list-plugins
     strategy:
       matrix:
@@ -178,6 +178,5 @@ jobs:
           - aarch64
           - armhf
           - i386
-          - static-x86_64
           - x86_64
       fail-fast: false

@@ -55,8 +55,10 @@ runs:
         )
         for plugin in ${INPUTS_PLUGINS}; do
           IFS='@' read -r name version <<< "${plugin}"
-          [[ -v "PLUGIN_FORMAT[${name}]" ]] && urlFormat="${PLUGIN_FORMAT[${name}]}" ||
-            urlFormat=$(printf "${RELEASE_FORMAT}" linuxdeploy{,-plugin-${name}{,-${ARCH}.AppImage}})
+          [[ -v "PLUGIN_FORMAT[${name}]" ]] && urlFormat="${PLUGIN_FORMAT[${name}]}" || {
+            if [[ "${name}" == 'appimage' && "${ARCH}" == 'i386' ]]; then arch='i686'; else arch="${ARCH}"; fi
+            urlFormat=$(printf "${RELEASE_FORMAT}" linuxdeploy{,-plugin-${name}{,-${arch}.AppImage}})
+          }
           [[ "${urlFormat}" == 'https://raw.'* ]] && : "${version:=master}" || : "${version:=${INPUTS_VERSION}}"
           printf -v url "${urlFormat}" "${version}"
           binaries+=("${INPUTS_DIR}/${url##*/}")
