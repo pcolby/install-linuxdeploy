@@ -141,7 +141,7 @@ jobs:
       # These should all be the latest official releases, however most (all?) plugins don't have official releases yet.
       PLUGINS: >-
         appimage@1-alpha-20250213-1
-        checkrt@r1
+        checkrt@r2
         conda@master
         demo@master
         gdb@master
