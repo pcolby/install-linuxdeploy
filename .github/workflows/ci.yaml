@@ -15,14 +15,14 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: yamllint .
 
   test-defaults:
     name: Defaults
     runs-on: ubuntu-${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
       - run: linuxdeploy-"${LINUXDEPLOY_ARCH}".AppImage --list-plugins
         env:
@@ -40,7 +40,7 @@ jobs:
     name: Options
     runs-on: ubuntu-${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Define test install dir
         run: tee -a "$GITHUB_ENV" <<< "INSTALL_DIR=${RUNNER_TEMP}/test/linuxdeploy/bin"
       - name: Record pre-state
@@ -101,7 +101,7 @@ jobs:
         python
         qt
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Filter plugins not supported for this arch
         run: |
           [[ '${{ matrix.os }}' != *-arm ]] ||
@@ -154,7 +154,7 @@ jobs:
         python@continuous
         qt@1-alpha-20250213-1
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Filter plugins not supported for this arch
         run: |
           [[ '${{ matrix.arch }}' =~ ^(i386|x86_64)$ ]] ||
