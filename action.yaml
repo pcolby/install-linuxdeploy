@@ -37,6 +37,7 @@ runs:
         declare -r ARCH="${INPUTS_ARCH:-${DEFAULT_ARCH[${RUNNER_ARCH,,}]}}"
         declare -r RELEASE_FORMAT='https://github.com/%s/%s/releases/download/%%s/%s'
         declare -r RAW_FORMAT='https://raw.githubusercontent.com/%s/%s/%%s/%s'
+        # shellcheck disable=SC2059 # We're intentionally using format strings.
         declare -Ar PLUGIN_FORMAT=(
           [checkrt]=$(printf "${RELEASE_FORMAT}" darealshinji linuxdeploy-plugin-checkrt{,.sh})
           [conda]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-conda{,.sh})
@@ -47,17 +48,20 @@ runs:
           [gstreamer]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-gstreamer{,.sh})
           [gtk]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-gtk{,.sh})
           [ncurses]=$(printf "${RAW_FORMAT}" linuxdeploy linuxdeploy-plugin-ncurses{,.sh})
-          [python]=$(printf "${RELEASE_FORMAT}" niess linuxdeploy-plugin-python{,-${ARCH}.AppImage})
+          [python]=$(printf "${RELEASE_FORMAT}" niess linuxdeploy-plugin-python{,-"${ARCH}".AppImage})
         )
         declare -a binaries=("${INPUTS_DIR}/linuxdeploy-${ARCH}.AppImage")
+        # shellcheck disable=SC2059 # We're intentionally using format strings.
         declare -a urls=(
-          $(printf "$(printf "${RELEASE_FORMAT}" linuxdeploy{,,-${ARCH}.AppImage})" "${INPUTS_VERSION}")
+          "$(printf "$(printf "${RELEASE_FORMAT}" linuxdeploy{,,-"${ARCH}".AppImage})" "${INPUTS_VERSION}")"
         )
+        # shellcheck disable=SC2015 # If assignemnt, or `;` fail, we've got bigger issues ;)
+        # shellcheck disable=SC2059 # We're intentionally using format strings.
         for plugin in ${INPUTS_PLUGINS}; do
           IFS='@' read -r name version <<< "${plugin}"
           [[ -v "PLUGIN_FORMAT[${name}]" ]] && urlFormat="${PLUGIN_FORMAT[${name}]}" || {
             if [[ "${name}" == 'appimage' && "${ARCH}" == 'i386' ]]; then arch='i686'; else arch="${ARCH}"; fi
-            urlFormat=$(printf "${RELEASE_FORMAT}" linuxdeploy{,-plugin-${name}{,-${arch}.AppImage}})
+            urlFormat=$(printf "${RELEASE_FORMAT}" linuxdeploy{,-plugin-"${name}"{,-"${arch}".AppImage}})
           }
           [[ "${urlFormat}" == 'https://raw.'* ]] && : "${version:=master}" || : "${version:=${INPUTS_VERSION}}"
           printf -v url "${urlFormat}" "${version}"
