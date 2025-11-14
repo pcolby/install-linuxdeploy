@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/pcolby/install-linuxdeploy/actions/workflows/ci.yaml/badge.svg?branch=main)](
   https://github.com/pcolby/install-linuxdeploy/actions/workflows/ci.yaml)
+[![CodeQL](https://github.com/pcolby/install-linuxdeploy/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](
+  https://github.com/pcolby/install-linuxdeploy/actions/workflows/github-code-scanning/codeql)
 
 GitHub Action for installing [linuxdeploy] with optional plugins.
 
