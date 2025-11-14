@@ -1,7 +1,7 @@
 # Install linuxdeploy
 
 [![CI](https://github.com/pcolby/install-linuxdeploy/actions/workflows/ci.yaml/badge.svg?branch=main)](
-  https://github.com/pcolby/pcolby/install-linuxdeploy/actions/workflows/ci.yaml)
+  https://github.com/pcolby/install-linuxdeploy/actions/workflows/ci.yaml)
 
 GitHub Action for installing [linuxdeploy] with optional plugins.
 
