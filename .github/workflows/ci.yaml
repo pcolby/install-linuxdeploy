@@ -21,7 +21,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Check Markdown files
         run: npm install markdownlint-cli2 --global && markdownlint-cli2
       - name: Check shell scripts
@@ -37,7 +37,7 @@ jobs:
     name: Defaults
     runs-on: ubuntu-${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./
       - run: linuxdeploy-"${LINUXDEPLOY_ARCH}".AppImage --list-plugins
         env:
@@ -55,7 +55,7 @@ jobs:
     name: Options
     runs-on: ubuntu-${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Define test install dir
         run: tee -a "${GITHUB_ENV}" <<< "INSTALL_DIR=${RUNNER_TEMP}/test/linuxdeploy/bin"
       - name: Record pre-state
@@ -117,7 +117,7 @@ jobs:
         python
         qt
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Filter plugins not supported for this arch
         run: |
           [[ "${MATRIX_OS}" != *-arm ]] ||
@@ -172,7 +172,7 @@ jobs:
         python@continuous
         qt@1-alpha-20250213-1
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Filter plugins not supported for this arch
         run: |
           [[ "${MATRIX_ARCH}" =~ ^(i386|x86_64)$ ]] ||
