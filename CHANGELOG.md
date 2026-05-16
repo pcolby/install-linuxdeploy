@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.1.1][] (2025-05-16)
+## [1.1.1][] (2026-05-16)
 
 Resovled benign ShellCheck warnings ([4f485f4]).
 
