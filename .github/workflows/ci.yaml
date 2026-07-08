@@ -42,7 +42,7 @@ jobs:
       - run: linuxdeploy-"${LINUXDEPLOY_ARCH}".AppImage --list-plugins
         env:
           LINUXDEPLOY_ARCH: ${{ case(endsWith(matrix.os, '-arm'), 'aarch64', 'x86_64') }}
-    strategy:
+    strategy: &strategy
       matrix:
         os:
           - 22.04
@@ -88,14 +88,7 @@ jobs:
           6cc269e593cc5febbeb4af61d2fc288bd59498d39a5a2e56bac2c66b371aadf11d6e057f3a205a42d945b2d87304fe71\
             ${INSTALL_DIR}/linuxdeploy-plugin-qt-i386.AppImage
           -
-    strategy:
-      matrix:
-        os:
-          - 22.04
-          - 22.04-arm
-          - 24.04
-          - 24.04-arm
-      fail-fast: false
+    strategy: *strategy
 
   test-plugins:
     name: Plugins
@@ -142,14 +135,7 @@ jobs:
           }
         env:
           LINUXDEPLOY_ARCH: ${{ case(endsWith(matrix.os, '-arm'), 'aarch64', 'x86_64') }}
-    strategy:
-      matrix:
-        os:
-          - 22.04
-          - 22.04-arm
-          - 24.04
-          - 24.04-arm
-      fail-fast: false
+    strategy: *strategy
 
   test-architectures:
     name: Archs
