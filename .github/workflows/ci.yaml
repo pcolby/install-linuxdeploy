@@ -49,8 +49,8 @@ jobs:
           - 22.04-arm
           - 24.04
           - 24.04-arm
-          - 26.06
-          - 26.06-arm
+          - 26.04
+          - 26.04-arm
       fail-fast: false
 
   test-options:
