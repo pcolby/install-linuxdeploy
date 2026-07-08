@@ -41,7 +41,7 @@ jobs:
       - uses: ./
       - run: linuxdeploy-"${LINUXDEPLOY_ARCH}".AppImage --list-plugins
         env:
-          LINUXDEPLOY_ARCH: ${{ endsWith(matrix.os, '-arm') && 'aarch64' || 'x86_64' }}
+          LINUXDEPLOY_ARCH: ${{ case(endsWith(matrix.os, '-arm'), 'aarch64', 'x86_64') }}
     strategy:
       matrix:
         os:
@@ -141,7 +141,7 @@ jobs:
             false
           }
         env:
-          LINUXDEPLOY_ARCH: ${{ endsWith(matrix.os, '-arm') && 'aarch64' || 'x86_64' }}
+          LINUXDEPLOY_ARCH: ${{ case(endsWith(matrix.os, '-arm'), 'aarch64', 'x86_64') }}
     strategy:
       matrix:
         os:
@@ -153,7 +153,7 @@ jobs:
 
   test-architectures:
     name: Archs
-    runs-on: ubuntu-${{ matrix.os }}${{ matrix.arch == 'aarch64' && '-arm' || '' }}
+    runs-on: ubuntu-${{ matrix.os }}${{ case(matrix.arch == 'aarch64', '-arm', '') }}
     env:
       MATRIX_ARCH: ${{ matrix.arch }}
       # These should all be the latest official releases, however most (all?) plugins don't have official releases yet.
